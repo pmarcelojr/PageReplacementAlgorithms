@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import argparse, random, re
 
 # Essa lista irá armazenar qual o número de vezes que uma
@@ -29,7 +30,7 @@ def inicializar_contador_fifo():
     qtd_conjuntos {int} -- número de conjuntos da memória cache
   """
   for x in range(0, qtd_conjuntos):
-    contador_fifo[x] = x
+    contador_fifo[x] = 0
 
   if debug:
     imprimir_contador_fifo()
