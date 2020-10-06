@@ -321,17 +321,17 @@ def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
   taxa_cache_hit = (num_hit / len(posicoes_memoria_para_acessar))*100
   print('Taxa de Cache HIT {number:.{digits}f}%'.format(number=taxa_cache_hit, digits=2))
 
-parser = argparse.ArgumentParser(prog='Simulador de Cache')
+parser = argparse.ArgumentParser(prog='Simulador de Substituição de Paginas')
 parser.add_argument('--total_cache',type=int, help='Número total de páginas da memória cache')
-parser.add_argument('--tipo_mapeamento', help='Tipo do mapeamento desejado, os valores aceitos para esse parâmetro são: DI / AS / AC ')
-parser.add_argument('--politica_substituicao', default='ALL', help='Qual será a política de substituição da memória que será utilizada, os valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU ')
+parser.add_argument('--tipo_mapeamento', help='Valores aceitos para esse parâmetro são: DI / AS / AC -  Tipos do mapeamento desejado')
+parser.add_argument('--politica_substituicao', default='ALL', help='Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de substituição da memória que será utilizada')
 parser.add_argument('--qtd_conjuntos', type=int, default=1, help='Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.')
 parser.add_argument('--arquivo_acesso', default='', help='Nome do arquivo que possui as posições da memória principal que serão acessadas, formato de número inteiro e uma posição de memória principal por linha. ')
 parser.add_argument('--debug', default=0, help='Por padrão vem setado como 0, caso queira exibir os debugs basta passar --debug 1')
 
 args = parser.parse_args()
 
-# recuperar toos os parâmetros passados
+# recuperar todos os parâmetros passados
 total_cache = args.total_cache
 tipo_mapeamento = args.tipo_mapeamento
 arquivo_acesso = args.arquivo_acesso
