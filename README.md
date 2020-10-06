@@ -18,3 +18,48 @@ Como resultado desejado deve aparecer algo do tipo
 ```
 Python 3.8.2
 ```
+
+Após a instalação do script para acessar o help da aplicação, basta digitar no console o comando a seguir:
+
+```
+$ python main.py -h
+```
+
+```
+usage: Simulador de Cache [-h] --total_cache TOTAL_CACHE --tipo_mapeamento
+                          TIPO_MAPEAMENTO
+                          [--politica_substituicao POLITICA_SUBSTITUICAO]
+                          [--qtd_conjuntos QTD_CONJUNTOS] --arquivo_acesso
+                          ARQUIVO_ACESSO [--debug DEBUG] [--step STEP]
+Simulador de Cache: error: the following arguments are required: --total_cache, --tipo_mapeamento, --arquivo_acesso
+PS C:\anselmo\versionado\simulador_cache> python .\main.py -h
+usage: Simulador de Cache [-h] --total_cache TOTAL_CACHE --tipo_mapeamento
+                          TIPO_MAPEAMENTO
+                          [--politica_substituicao POLITICA_SUBSTITUICAO]
+                          [--qtd_conjuntos QTD_CONJUNTOS] --arquivo_acesso
+                          ARQUIVO_ACESSO [--debug DEBUG] [--step STEP]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --total_cache TOTAL_CACHE
+                        Número total de posições da memória cache.
+  --tipo_mapeamento TIPO_MAPEAMENTO
+                        Tipo do mapeamento desejado. Os valores aceitos para
+                        esse parâmetro são: DI / AS / AC.
+  --politica_substituicao POLITICA_SUBSTITUICAO
+                        Qual será a política de substituição da cache que será
+                        utilizada. Os valores aceitos para esse parâmetro são:
+                        RANDOM / FIFO / LRU / LFU.
+  --qtd_conjuntos QTD_CONJUNTOS
+                        Quando for escolhido o tipo de mapeamento AC deve-se
+                        informar quantos conjuntos devem ser criados dentro da
+                        memória cache.
+  --arquivo_acesso ARQUIVO_ACESSO
+                        Nome do arquivo que possui as posições da memória
+                        principal que serão acessadas. Para cada linha do
+                        arquivo deve-se informar um número inteiro.
+  --debug DEBUG         Por padrão vem setado como 0, caso queira exibir as
+                        mensagens de debugs basta passar --debug 1.
+  --step STEP           Solicita a interação do usuário após cada linha
+                        processada do arquivo --step 1.
+```
