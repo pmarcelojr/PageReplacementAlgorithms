@@ -389,28 +389,12 @@ def executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_pa
   taxa_cache_hit = (num_hit / len(posicoes_memoria_para_acessar))*100
   print('Taxa de Cache HIT {number:.{digits}f}%'.format(number=taxa_cache_hit, digits=2))
 
-
+# O mapeamento associativo é um tipo de mapeamento associativo por conjunto ou o número de conjunto é igual a 1
 def executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, algorithm):
-  """O mapeamento associativo é um tipo de mapeamento associativo por conjunto
-  ou o número de conjunto é igual a 1
-
-  Arguments:
-    size {int} -- tamanho total de palavras da cache
-    posicoes_memoria_para_acessar {list} - quais são as posições de memória que devem ser acessadas
-    algorithm {str} -- qual será a política de subistituição
-  """
-  # o número 1 indica que haverá apenas um único conjunto no modo associativo por conjunto
-  # que é igual ao modo associativo padrão! :) SHAZAM
   executar_mapeamento_associativo_conjunto(size, 1, posicoes_memoria_para_acessar, algorithm)
 
-
+# Executa a operação de mapeamento direto.
 def executar_mapeamento_direto(size, posicoes_memoria_para_acessar):
-  """Executa a operação de mapeamento direto.
-
-  Arguments:
-    size {int} -- tamanho total de palavras da cache
-    posicoes_memoria_para_acessar {list} - quais são as posições de memória que devem ser acessadas
-  """
   # zera tota a memória cache
   memoria_cache = inicializar_cache(size)
 
