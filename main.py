@@ -530,7 +530,7 @@ def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
     memoria_cache[posicao_cache] = posicao_memoria
 
     print('\nLeitura linha {},  posição de memória desejada {}.'.format(index,posicao_memoria))
-    print('Status: {}'.format(hitoumiss))
+    print('       Status: {}'.format(hitoumiss))
     print_cache_direto(memoria_cache)
 
     if debug:
