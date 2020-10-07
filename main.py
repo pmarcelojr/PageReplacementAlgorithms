@@ -550,11 +550,11 @@ def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
 ##########################
 
 # parse dos parâmetros passados no comando
-parser = argparse.ArgumentParser(prog='Simulador de Cache')
+parser = argparse.ArgumentParser(prog='Simulador de Substituição de Paginas')
 parser.add_argument('--total_cache', required=True, type=int, help='Número total de posições da memória cache.')
-parser.add_argument('--tipo_mapeamento', required=True, help='Tipo do mapeamento desejado. Os valores aceitos para esse parâmetro são: DI / AS / AC.')
-parser.add_argument('--politica_substituicao', default='ALL', help='Qual será a política de substituição da cache que será utilizada. Os valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU.')
-parser.add_argument('--qtd_conjuntos', type=int, default=2, help='Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.')
+parser.add_argument('--tipo_mapeamento', required=True, help='Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.')
+parser.add_argument('--politica_substituicao', default='ALL', help='Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de substituição da memória que será utilizada.')
+parser.add_argument('--qtd_conjuntos', type=int, default=2, help='Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.e.')
 parser.add_argument('--arquivo_acesso', required=True, default='', help='Nome do arquivo que possui as posições da memória principal que serão acessadas. Para cada linha do arquivo deve-se informar um número inteiro.')
 parser.add_argument('--debug', default=0, help='Por padrão vem setado como 0, caso queira exibir as mensagens de debugs basta passar --debug 1.')
 parser.add_argument('--step', default=0, help='Solicita a interação do usuário após cada linha processada do arquivo --step 1.')
