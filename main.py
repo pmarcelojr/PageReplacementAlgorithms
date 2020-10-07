@@ -14,20 +14,20 @@ contador_lfu = {}
 contador_fifo = {}
 
 
-def existe_posicao_vazia(memoria_cache, qtd_conjuntos, posicao_memoria):
+def existe_posicao_vazia(memoria_cache, set_size, posicao_memoria):
   """Verifica se existe na cache uma posição de memória que ainda não foi utilizada,
   se existir, essa posição é retornada.
 
   Arguments:
     memoria_cache {list} -- memória cache
-    qtd_conjuntos {int} -- número de conjuntos da cache
+    set_size {int} -- número de conjuntos da cache
     posicao_memoria {int} -- posição de memória que se quer armazenar na cache
 
   Returns:
     [int] -- com a primeira posição de memória vazia do conjunto
   """
-  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, qtd_conjuntos)
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, qtd_conjuntos)
+  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, set_size)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, set_size)
 
   # verifica se alguma das posições daquele conjunto está vazia
   for x in lista_posicoes:
@@ -54,7 +54,7 @@ def inicializar_contador_fifo():
   ocorra no primeiro elemento que faz parte do conjunto
   """
   # cria no contador fifo uma posição para cada conjunto
-  for x in range(0, qtd_conjuntos):
+  for x in range(0, set_size):
     contador_fifo[x] = 0
 
   if debug:
@@ -80,21 +80,21 @@ def inicializar_contador_lfu():
   que será somado tada vez que houver um CACHE HIT e, será zerado quando a posição for substituida
   """
   # cria on contador LFU uma posiçõao para caqda posição de memória
-  for x in range(0, total_cache):
+  for x in range(0, size):
     contador_lfu[x] = 0
 
   if debug:
     imprimir_contador_lfu()
 
 
-def get_num_conjuno_posicao_memoria(posicao_memoria, qtd_conjuntos):
+def get_num_conjuno_posicao_memoria(posicao_memoria, set_size):
   """Retorna o número do conjunto onde essa posição de memória é sempre mapeada
 
   Arguments:
     posicao_memoria {int} -- posição de memória que se quer acessar
-    qtd_conjuntos {int} -- número de conjuntos que a cache possui
+    set_size {int} -- número de conjuntos que a cache possui
   """
-  return int(posicao_memoria)%int(qtd_conjuntos)
+  return int(posicao_memoria)%int(set_size)
 
 
 def print_cache_direto(cache):
@@ -127,28 +127,28 @@ def print_cache_associativo(cache):
   print("+----------+---------------+")
 
 
-def print_cache_associativo_conjunto(cache, qtd_conjuntos):
+def print_cache_associativo_conjunto(cache, set_size):
   """Imprime o estado da memória cache no modelo de mapeamento associativo por conjunto.
   """
   print("+------------------------------+")
-  print("|Tamanho: {:>21}|\n|Conjuntos: {:>19}|".format(len(cache), qtd_conjuntos))
+  print("|Tamanho: {:>21}|\n|Conjuntos: {:>19}|".format(len(cache), set_size))
   print("+------------------------------+")
   print("+  Cache Associativo Conjunto  +")
   print("+-------+-------+--------------+")
   print("|#\t| Cnj\t|   Pos Memória|")
   print("+-------+-------+--------------+")
   for posicao, valor in cache.items():
-    num_conjunto = get_num_conjuno_posicao_memoria(posicao, qtd_conjuntos)
+    num_conjunto = get_num_conjuno_posicao_memoria(posicao, set_size)
     print("|{} \t|{:4}\t|\t   {:>4}|".format(posicao, num_conjunto, valor))
   print("+-------+-------+--------------+")
 
 
-def inicializar_cache(total_cache):
+def inicializar_cache(size):
   """Cria uma memória cache zerada utilizando dicionários (chave, valor) e com
   valor padrão igual a '-1'
 
   Arguments:
-    total_cache {int} -- tamanho total de palavras da cache
+    size {int} -- tamanho total de palavras da cache
 
   Returns:
     [list] -- [dicionário]
@@ -157,41 +157,41 @@ def inicializar_cache(total_cache):
   memoria_cache = {}
 
   # popula a memória cache com o valor -1, isso indica que a posição não foi usada
-  for x in range(0, total_cache):
+  for x in range(0, size):
     memoria_cache[x] = -1
 
   return memoria_cache
 
 
-def verifica_posicao_em_cache_associativo_conjunto(memoria_cache, qtd_conjuntos, posicao_memoria,):
+def verifica_posicao_em_cache_associativo_conjunto(memoria_cache, set_size, posicao_memoria,):
   """Verifica se uma determinada posição de memória está na cache
     no modo associativo / associativo por conjunto
 
   Arguments:
     memoria_cache {list} -- memória cache
-    qtd_conjuntos {int} -- número de conjuntos do cache
+    set_size {int} -- número de conjuntos do cache
     posicao_memoria {int} -- posição que se deseja acessar
   """
-  num_conjunto = int(posicao_memoria)%int(qtd_conjuntos)
+  num_conjunto = int(posicao_memoria)%int(set_size)
 
   while num_conjunto < len(memoria_cache):
     if memoria_cache[num_conjunto] == posicao_memoria:
       return num_conjunto
 
-    num_conjunto += qtd_conjuntos
+    num_conjunto += set_size
 
   # não achou a posição de memória na cache
   return -1
 
 
-def get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, qtd_conjuntos):
+def get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, set_size):
   """Retorna uma lista com todas as posições da memória cache que fazem
   parte de um determinado conjunto.
 
   Arguments:
     memoria_cache {list} -- memória cache
     num_conjunto {int} -- número do conjunto que se quer saber quais são os endereçamentos associados com aquele conjunto
-    qtd_conjuntos {int} -- quantidade total de conjuntos possíveis na memória
+    set_size {int} -- quantidade total de conjuntos possíveis na memória
 
   Returns:
     [list] -- lista de posições de memória associada com um conjunto em particular
@@ -200,23 +200,23 @@ def get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, qtd_conjuntos
   posicao_inicial = num_conjunto
   while posicao_inicial < len(memoria_cache):
     lista_posicoes.append(posicao_inicial)
-    posicao_inicial += qtd_conjuntos
+    posicao_inicial += set_size
   return lista_posicoes
 
 
-def politica_substituicao_RANDOM(memoria_cache, qtd_conjuntos, posicao_memoria):
-  """Nessa politica de substituição, no momento que ocorrer um CACHE MISS,
+def algorithm_RANDOM(memoria_cache, set_size, posicao_memoria):
+  """Nessa algoritmo, no momento que ocorrer um CACHE MISS,
   será sorteado um elemento do conjunto para ser substituído pela nova posição
   de memória.
 
   Arguments:
     memoria_cache {list} -- memóiria cache
-    qtd_conjuntos {int} -- quantidade de conjuntos
+    set_size {int} -- quantidade de conjuntos
     posicao_memoria {int} -- posição de memória que será acessada
   """
-  num_conjunto = int(posicao_memoria)%int(qtd_conjuntos)
+  num_conjunto = int(posicao_memoria)%int(set_size)
 
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, qtd_conjuntos)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
 
   # seleciona de forma aleatória uma das posições de memória
   # que fazem parte do conjunto em particular e armazena dentro
@@ -229,18 +229,18 @@ def politica_substituicao_RANDOM(memoria_cache, qtd_conjuntos, posicao_memoria):
   memoria_cache[posicao_memoria_cache_para_trocar] = posicao_memoria
 
 
-def politica_substituicao_FIFO(memoria_cache, qtd_conjuntos, posicao_memoria):
-  """Nessa politica de substituição, o primeiro elemento que entra é o primeiro elemento que sai,
+def algorithm_FIFO(memoria_cache, set_size, posicao_memoria):
+  """Nessa algoritmo, o primeiro elemento que entra é o primeiro elemento que sai,
   funciona exatamente como uma fila.
 
   Arguments:
     memoria_cache {list} -- memóiria cache
-    qtd_conjuntos {int} -- quantidade de conjuntos
+    set_size {int} -- quantidade de conjuntos
     posicao_memoria {int} -- posição de memória que será acessada
   """
-  num_conjunto = int(posicao_memoria)%int(qtd_conjuntos)
+  num_conjunto = int(posicao_memoria)%int(set_size)
   posicao_substituir = contador_fifo[num_conjunto]
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, qtd_conjuntos)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
 
   if debug:
     imprimir_contador_fifo()
@@ -253,26 +253,26 @@ def politica_substituicao_FIFO(memoria_cache, qtd_conjuntos, posicao_memoria):
 
   contador_fifo[num_conjunto] += 1
 
-  if contador_fifo[num_conjunto] >= (len(memoria_cache)/qtd_conjuntos):
+  if contador_fifo[num_conjunto] >= (len(memoria_cache)/set_size):
     contador_fifo[num_conjunto] = 0
 
   if debug:
     print('Posição de memória cache que será trocada é: {}'.format(lista_posicoes[posicao_substituir]))
 
 
-def politica_substituicao_LFU(memoria_cache, qtd_conjuntos, posicao_memoria):
-  """Nessa politica de substituição, o elemento que é menos acessado é removido da
+def algorithm_LFU(memoria_cache, set_size, posicao_memoria):
+  """Nessa algoritmo, o elemento que é menos acessado é removido da
   memória cache quando ocorrer um CACHE MISS. A cada CACHE HIT a posição do HIT ganha um ponto
   de acesso, isso é usado como contador para saber qual posição deve ser removida no caso de
   CACHE MISS.
 
   Arguments:
     memoria_cache {list} -- memóiria cache
-    qtd_conjuntos {int} -- quantidade de conjuntos
+    set_size {int} -- quantidade de conjuntos
     posicao_memoria {int} -- posição de memória que será acessada
   """
-  num_conjunto = int(posicao_memoria)%int(qtd_conjuntos)
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, qtd_conjuntos)
+  num_conjunto = int(posicao_memoria)%int(set_size)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
 
   # descobrir dentro do conjunto qual posição da cache tem menos acesso
   posicao_substituir = 0
@@ -313,22 +313,22 @@ def politica_substituicao_LFU(memoria_cache, qtd_conjuntos, posicao_memoria):
     print('Posição de memória cache que será trocada é: {}'.format(posicao_substituir))
 
 
-def politica_substituicao_LRU_miss(memoria_cache, qtd_conjuntos, posicao_memoria):
-  """Nessa politica de substituição quando ocorre um HIT a posição vai para o topo da fila,
+def algorithm_LRU_miss(memoria_cache, set_size, posicao_memoria):
+  """Nessa algoritmo quando ocorre um HIT a posição vai para o topo da fila,
   se ocorrer um MISS remove o elemento 0 e a posição da cache onde a memória foi alocada é
   colocada no topo da fila
 
   Arguments:
     memoria_cache {list} -- memóiria cache
-    qtd_conjuntos {int} -- quantidade de conjuntos
+    set_size {int} -- quantidade de conjuntos
     posicao_memoria {int} -- posição de memória que será acessada
   """
-  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, qtd_conjuntos)
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, qtd_conjuntos)
+  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, set_size)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
 
   # copiar os valores de cada posição da cache do conjunto em questão uma posição para traz
   for posicao_cache in lista_posicoes:
-    proxima_posicao = posicao_cache+qtd_conjuntos
+    proxima_posicao = posicao_cache+set_size
     if proxima_posicao < len(memoria_cache):
       memoria_cache[posicao_cache] = memoria_cache[proxima_posicao]
 
@@ -341,19 +341,19 @@ def politica_substituicao_LRU_miss(memoria_cache, qtd_conjuntos, posicao_memoria
     print('Lista posições: {}'.format(lista_posicoes))
 
 
-def politica_substituicao_LRU_hit(memoria_cache, qtd_conjuntos, posicao_memoria, posicao_cache_hit):
-  """Nessa politica de substituição quando ocorre um HIT a posição vai para o topo da fila,
+def algorithm_LRU_hit(memoria_cache, set_size, posicao_memoria, posicao_cache_hit):
+  """Nessa algoritmo quando ocorre um HIT a posição vai para o topo da fila,
   se ocorrer um MISS remove o elemento 0 e a posição da cache onde a memória foi alocada é
   colocada no topo da fila
 
   Arguments:
     memoria_cache {list} -- memóiria cache
-    qtd_conjuntos {int} -- quantidade de conjuntos
+    set_size {int} -- quantidade de conjuntos
     posicao_memoria {int} -- posição de memória que será acessada
     posicao_cache_hit {int} -- posição de memória cache onde o dados da memória principal está
   """
-  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, qtd_conjuntos)
-  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, qtd_conjuntos)
+  num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, set_size)
+  lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
 
   # copiar os valores de cada posição da cache do conjunto em questão uma posição para traz
   for posicao_cache in lista_posicoes:
@@ -365,7 +365,7 @@ def politica_substituicao_LRU_hit(memoria_cache, qtd_conjuntos, posicao_memoria,
       # 8 <- 12
       # 12 <- 16
       # 16 <- 4
-      proxima_posicao = posicao_cache+qtd_conjuntos
+      proxima_posicao = posicao_cache+set_size
       if proxima_posicao < len(memoria_cache):
         memoria_cache[posicao_cache] = memoria_cache[proxima_posicao]
 
@@ -378,44 +378,44 @@ def politica_substituicao_LRU_hit(memoria_cache, qtd_conjuntos, posicao_memoria,
     print('Lista posições: {}'.format(lista_posicoes))
 
 
-def executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, politica_substituicao='RANDOM'):
+def executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, algorithm='RANDOM'):
   """Executa a operação de mapeamento associativo, ou seja, não existe uma posição específica
   para o mapemento de uma posição de memória.
 
   Arguments:
-    total_cache {int} -- tamanho total de palavras da cache
-    qtd_conjuntos {int} -- quantidade de conjuntos na cache
+    size {int} -- tamanho total de palavras da cache
+    set_size {int} -- quantidade de conjuntos na cache
     posicoes_memoria_para_acessar {list} -- quais são as posições de memória que devem ser acessadas
-    politica_substituicao {str} -- Qual é a política para substituição caso a posição de memória desejada não esteja na cache E não exista espaço vazio
+    algorithm {str} -- Qual é a política para substituição caso a posição de memória desejada não esteja na cache E não exista espaço vazio
   """
 
-  memoria_cache = inicializar_cache(total_cache)
+  memoria_cache = inicializar_cache(size)
 
   # se o número de conjuntos for igual a zero, então estamos simulando
   # com a cache associativo!
   nome_mapeamento = 'Associativo'
-  if qtd_conjuntos == 1:
+  if set_size == 1:
     print_cache_associativo(memoria_cache)
   else:
     nome_mapeamento = 'Associativo Por Conjunto'
-    print_cache_associativo_conjunto(memoria_cache, qtd_conjuntos)
+    print_cache_associativo_conjunto(memoria_cache, set_size)
 
   num_hit = 0
   num_miss = 0
 
   # se a política for fifo então inicializa a lista de controle
-  if politica_substituicao == 'FIFO':
+  if algorithm == 'FIFO':
     inicializar_contador_fifo()
 
   # se a política for fifo então inicializa a lista de controle
-  if politica_substituicao == 'LFU':
+  if algorithm == 'LFU':
     inicializar_contador_lfu()
 
   # percorre cada uma das posições de memória que estavam no arquivo
   for index, posicao_memoria in enumerate(posicoes_memoria_para_acessar):
     print('\n\n\nInteração número: {}'.format(index+1))
     # verificar se existe ou não a posição de memória desejada na cache
-    inserir_memoria_na_posicao_cache = verifica_posicao_em_cache_associativo_conjunto(memoria_cache, qtd_conjuntos, posicao_memoria)
+    inserir_memoria_na_posicao_cache = verifica_posicao_em_cache_associativo_conjunto(memoria_cache, set_size, posicao_memoria)
 
     # a posição desejada já está na memória
     if inserir_memoria_na_posicao_cache >= 0:
@@ -423,20 +423,20 @@ def executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoe
       print('Cache HIT: posiçao de memória {}, posição cache {}'.format(posicao_memoria, inserir_memoria_na_posicao_cache))
 
       # se for LFU então toda vez que der um HIT será incrementado o contador daquela posição
-      if politica_substituicao == 'LFU':
+      if algorithm == 'LFU':
         contador_lfu[inserir_memoria_na_posicao_cache] += 1
         imprimir_contador_lfu()
 
       # se for LRU então toda vez que der um HIT será incrementado o contador daquela posição
-      if politica_substituicao == 'LRU':
-        politica_substituicao_LRU_hit(memoria_cache, qtd_conjuntos, posicao_memoria, inserir_memoria_na_posicao_cache)
+      if algorithm == 'LRU':
+        algorithm_LRU_hit(memoria_cache, set_size, posicao_memoria, inserir_memoria_na_posicao_cache)
 
     else:
       num_miss += 1
       print('Cache MISS: posiçao de memória {}'.format(posicao_memoria))
 
       # verifica se existe uma posição vazia na cache, se sim aloca nela a posição de memória
-      posicao_vazia = existe_posicao_vazia(memoria_cache, qtd_conjuntos, posicao_memoria)
+      posicao_vazia = existe_posicao_vazia(memoria_cache, set_size, posicao_memoria)
 
       if debug:
         print('Posição da cache ainda não utilizada: {}'.format(posicao_vazia))
@@ -447,33 +447,33 @@ def executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoe
       ########
       if posicao_vazia >= 0:
         memoria_cache[posicao_vazia] = posicao_memoria
-      elif politica_substituicao == 'RANDOM':
-        politica_substituicao_RANDOM(memoria_cache,qtd_conjuntos,posicao_memoria)
-      elif politica_substituicao == 'FIFO':
-        politica_substituicao_FIFO(memoria_cache,qtd_conjuntos,posicao_memoria)
-      elif politica_substituicao == 'LFU':
-        politica_substituicao_LFU(memoria_cache,qtd_conjuntos,posicao_memoria)
-      elif politica_substituicao == 'LRU':
-        politica_substituicao_LRU_miss(memoria_cache,qtd_conjuntos,posicao_memoria)
+      elif algorithm == 'RANDOM':
+        algorithm_RANDOM(memoria_cache,set_size,posicao_memoria)
+      elif algorithm == 'FIFO':
+        algorithm_FIFO(memoria_cache,set_size,posicao_memoria)
+      elif algorithm == 'LFU':
+        algorithm_LFU(memoria_cache,set_size,posicao_memoria)
+      elif algorithm == 'LRU':
+        algorithm_LRU_miss(memoria_cache,set_size,posicao_memoria)
 
 
-    if qtd_conjuntos == 1:
+    if set_size == 1:
       print_cache_associativo(memoria_cache)
     else:
-      print_cache_associativo_conjunto(memoria_cache, qtd_conjuntos)
+      print_cache_associativo_conjunto(memoria_cache, set_size)
 
     if step:
       print('Tecle ENTER para processar o próximo passo:');
       input()
 
   # se for LFU e com debug imprimir os dados computador no contador LFU
-  if politica_substituicao == 'LFU' and debug:
+  if algorithm == 'LFU' and debug:
     imprimir_contador_lfu()
 
   print('\n\n-----------------')
   print('Resumo Mapeamento {}'.format(nome_mapeamento))
   print('-----------------')
-  print('Política de Substituição: {}'.format(politica_substituicao))
+  print('Política de Substituição: {}'.format(algorithm))
   print('-----------------')
   print('Total de memórias acessadas: {}'.format(len(posicoes_memoria_para_acessar)))
   print('Total HIT {}'.format(num_hit))
@@ -482,29 +482,29 @@ def executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoe
   print('Taxa de Cache HIT {number:.{digits}f}%'.format(number=taxa_cache_hit, digits=2))
 
 
-def executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, politica_substituicao):
+def executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, algorithm):
   """O mapeamento associativo é um tipo de mapeamento associativo por conjunto
   ou o número de conjunto é igual a 1
 
   Arguments:
-    total_cache {int} -- tamanho total de palavras da cache
+    size {int} -- tamanho total de palavras da cache
     posicoes_memoria_para_acessar {list} - quais são as posições de memória que devem ser acessadas
-    politica_substituicao {str} -- qual será a política de subistituição
+    algorithm {str} -- qual será a política de subistituição
   """
   # o número 1 indica que haverá apenas um único conjunto no modo associativo por conjunto
   # que é igual ao modo associativo padrão! :) SHAZAM
-  executar_mapeamento_associativo_conjunto(total_cache, 1, posicoes_memoria_para_acessar, politica_substituicao)
+  executar_mapeamento_associativo_conjunto(size, 1, posicoes_memoria_para_acessar, algorithm)
 
 
-def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
+def executar_mapeamento_direto(size, posicoes_memoria_para_acessar):
   """Executa a operação de mapeamento direto.
 
   Arguments:
-    total_cache {int} -- tamanho total de palavras da cache
+    size {int} -- tamanho total de palavras da cache
     posicoes_memoria_para_acessar {list} - quais são as posições de memória que devem ser acessadas
   """
   # zera tota a memória cache
-  memoria_cache = inicializar_cache(total_cache)
+  memoria_cache = inicializar_cache(size)
 
   print('Situação Inicial da Memória Cache')
   print_cache_direto(memoria_cache)
@@ -516,7 +516,7 @@ def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
     # no mapeamento direto, cada posição da memória principal tem uma posição
     # específica na memória cache, essa posição será calculada em função
     # do mod da posição acessada em relação ao tamanho total da cache
-    posicao_cache = posicao_memoria % total_cache
+    posicao_cache = posicao_memoria % size
 
     # se a posição de memória principal armazenada na linha da cache for a posição
     # desejada então dá hit, caso contrário da miss
@@ -551,54 +551,54 @@ def executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar):
 
 # parse dos parâmetros passados no comando
 parser = argparse.ArgumentParser(prog='Simulador de Substituição de Paginas')
-parser.add_argument('--total_cache', required=True, type=int, help='Número total de posições da memória cache.')
-parser.add_argument('--tipo_mapeamento', required=True, help='Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.')
-parser.add_argument('--politica_substituicao', default='ALL', help='Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de substituição da memória que será utilizada.')
-parser.add_argument('--qtd_conjuntos', type=int, default=2, help='Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.e.')
-parser.add_argument('--arquivo_acesso', required=True, default='', help='Nome do arquivo que possui as posições da memória principal que serão acessadas. Para cada linha do arquivo deve-se informar um número inteiro.')
+parser.add_argument('--size', required=True, type=int, help='Número total de posições da memória cache.')
+parser.add_argument('--mapping', required=True, help='Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.')
+parser.add_argument('--algorithm', default='ALL', help='Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de substituição da memória que será utilizada.')
+parser.add_argument('--set_size', type=int, default=2, help='Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.e.')
+parser.add_argument('--path', required=True, default='', help='Nome do arquivo que possui as posições da memória principal que serão acessadas. Para cada linha do arquivo deve-se informar um número inteiro.')
 parser.add_argument('--debug', default=0, help='Por padrão vem setado como 0, caso queira exibir as mensagens de debugs basta passar --debug 1.')
 parser.add_argument('--step', default=0, help='Solicita a interação do usuário após cada linha processada do arquivo --step 1.')
 
 args = parser.parse_args()
 
 # recuperar toos os parâmetros passados
-total_cache = args.total_cache
-tipo_mapeamento = args.tipo_mapeamento
-arquivo_acesso = args.arquivo_acesso
-qtd_conjuntos = args.qtd_conjuntos
-politica_substituicao  = args.politica_substituicao.upper()
+size = args.size
+mapping = args.mapping
+path = args.path
+set_size = args.set_size
+algorithm  = args.algorithm.upper()
 debug = args.debug
 step = args.step
 
-if qtd_conjuntos <= 0:
+if set_size <= 0:
   print('\n\n------------------------------')
   print('ERRO: O número de conjuntos não pode ser 0.')
   print('------------------------------')
   exit()
 
 
-if arquivo_acesso == '':
+if path == '':
   print('\n\n------------------------------')
-  print('ERRO: É necesário informar o nome do arquivo que será processado, o parâmetro esperado é --arquivo_acesso seguido do nome do arquivo.')
+  print('ERRO: É necesário informar o nome do arquivo que será processado, o parâmetro esperado é --path seguido do nome do arquivo.')
   print('------------------------------')
   exit()
 
 # lê o arquivo e armazena cada uma das posições de memória que será lida em uma lista
 try:
-  f = open(arquivo_acesso, "r")
+  f = open(path, "r")
   posicoes_memoria_para_acessar = []
   for posicao_memoria in f:
     posicoes_memoria_para_acessar.append(int(re.sub(r"\r?\n?$", "", posicao_memoria, 1)))
   f.close()
 except IOError as identifier:
   print('\n\n------------------------------')
-  print('ERRO: Arquivo \'{}\'não encontrado.'.format(arquivo_acesso))
+  print('ERRO: Arquivo \'{}\'não encontrado.'.format(path))
   print('------------------------------')
   exit()
 
 if len(posicoes_memoria_para_acessar) == 0:
     print('\n\n------------------------------')
-    print('ERRO: o arquivo {} não possui nenhuma linha com números inteiros.'.format(arquivo_acesso))
+    print('ERRO: o arquivo {} não possui nenhuma linha com números inteiros.'.format(path))
     print('------------------------------')
     exit()
 
@@ -608,43 +608,43 @@ print('+====================+')
 print('+ Setando parâmetros iniciais da cache+')
 
 
-if tipo_mapeamento != 'DI':
-  if politica_substituicao != 'RANDOM' and politica_substituicao != 'FIFO' and politica_substituicao != 'LRU' and politica_substituicao != 'LFU' and politica_substituicao != 'ALL':
+if mapping != 'DI':
+  if algorithm != 'RANDOM' and algorithm != 'FIFO' and algorithm != 'LRU' and algorithm != 'LFU' and algorithm != 'ALL':
     print('\n\n------------------------------')
-    print('ERRO: A política de substituição {} não existe.'.format(politica_substituicao))
+    print('ERRO: A política de substituição {} não existe.'.format(algorithm))
     print('------------------------------')
     exit()
 
 # se o tipo do mapeamento for direto DI
-if tipo_mapeamento == 'DI':
-  executar_mapeamento_direto(total_cache, posicoes_memoria_para_acessar)
-elif tipo_mapeamento == 'AS':
-  if (politica_substituicao == 'ALL'):
-    executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, 'RANDOM')
-    executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, 'FIFO')
-    executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, 'LRU')
-    executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, 'LFU')
+if mapping == 'DI':
+  executar_mapeamento_direto(size, posicoes_memoria_para_acessar)
+elif mapping == 'AS':
+  if (algorithm == 'ALL'):
+    executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, 'RANDOM')
+    executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, 'FIFO')
+    executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, 'LRU')
+    executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, 'LFU')
   else:
-    executar_mapeamento_associativo(total_cache, posicoes_memoria_para_acessar, politica_substituicao)
+    executar_mapeamento_associativo(size, posicoes_memoria_para_acessar, algorithm)
 
-elif tipo_mapeamento == 'AC':
+elif mapping == 'AC':
   # o número de conjuntos deve ser um divisor do total da memória
-  if total_cache%qtd_conjuntos != 0:
+  if size%set_size != 0:
     print('\n\n------------------------------')
-    print('ERRO: O número de conjuntos {} deve ser obrigatoriamente um divisor do total de memória cache disponível {}.'.format(qtd_conjuntos, total_cache))
+    print('ERRO: O número de conjuntos {} deve ser obrigatoriamente um divisor do total de memória cache disponível {}.'.format(set_size, size))
     print('------------------------------')
     exit()
 
-  if (politica_substituicao == 'ALL'):
-    executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, 'RANDOM')
-    executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, 'FIFO')
-    executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, 'LRU')
-    executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, 'LFU')
+  if (algorithm == 'ALL'):
+    executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, 'RANDOM')
+    executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, 'FIFO')
+    executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, 'LRU')
+    executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, 'LFU')
   else:
-    executar_mapeamento_associativo_conjunto(total_cache, qtd_conjuntos, posicoes_memoria_para_acessar, politica_substituicao)
+    executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_para_acessar, algorithm)
 else:
   print('\n\n------------------------------')
-  print('ERRO: O tipo de mapeamento \'{}\'não foi encontrado. \nOs valores possíveis para o parâmetro --tipo_mapeamento são: DI / AS / AC'.format(tipo_mapeamento))
+  print('ERRO: O tipo de mapeamento \'{}\'não foi encontrado. \nOs valores possíveis para o parâmetro --mapping são: DI / AS / AC'.format(mapping))
   print('------------------------------')
   exit()
 
@@ -653,14 +653,14 @@ if debug:
   print('-'*80)
   print('Parâmetros da Simulação')
   print('-'*80)
-  print("Arquivo com as posições de memória: {}".format(arquivo_acesso))
+  print("Arquivo com as posições de memória: {}".format(path))
   print('Número de posições de memória: {}'.format(len(posicoes_memoria_para_acessar)))
   print('As posições são: {}'.format(posicoes_memoria_para_acessar))
-  print('Tamanho total da cache: {}'.format(total_cache))
-  print("Tipo Mapeamento: {}".format(tipo_mapeamento))
-  if tipo_mapeamento != 'AS':
-    print("Quantidade de Conjuntos: {}".format(qtd_conjuntos))
-  print("Política de Substituição: {}".format(politica_substituicao))
+  print('Tamanho total da cache: {}'.format(size))
+  print("Tipo Mapeamento: {}".format(mapping))
+  if mapping != 'AS':
+    print("Quantidade de Conjuntos: {}".format(set_size))
+  print("Política de Substituição: {}".format(algorithm))
   print("Debug: {}".format(debug))
   print("Step: {}".format(step))
   print('-'*80)

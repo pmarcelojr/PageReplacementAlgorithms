@@ -4,6 +4,7 @@ Esse script permite que você visualize de forma didática como ocorre a escolha
 
 # O que foi implementado
 --
+O projeto consiste em um algoritmos de subsituição de páginas de memória em cache. O simulador recebe como entrada a sequência de referências ás páginas de memória (endereços), e simula as substituições realizadas em cache após a ocorrência de um Miss/Hit, para os algoritmos FIFO, LFU, LRU e RANDOM. O simulador assume um cache operando com o esquema de mapeamento associativo. O programa recebe como parâmetro a capacidade total da memória cache (número total de páginas), além do caminho, nome do arquivo a ser lido pelo programa, contendo as sequências de referÊncias aos acessos de páginas da memória.
 
 No simulador, você poderá escolher qual será a política de substituição de páginas da memória cache. 
 São 4 algoritmos de substituição, sendo eles:
@@ -43,29 +44,29 @@ $ python main.py -h
 ```
 
 ```
-usage: Simulador de Substituição de Paginas [-h] [--total_cache TOTAL_CACHE]
-                                              [--tipo_mapeamento TIPO_MAPEAMENTO]
-                                              [--politica_substituicao POLITICA_SUBSTITUICAO]
-                                              [--qtd_conjuntos QTD_CONJUNTOS]
-                                              [--arquivo_acesso ARQUIVO_ACESSO]
+usage: Simulador de Substituição de Paginas [-h] [--size SIZE]
+                                              [--mapping MAPPING]
+                                              [--algorithm ALGORITHM/]
+                                              [--set_size SET_SIZE]
+                                              [--path PATH]
                                               [--debug DEBUG]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --total_cache TOTAL_CACHE
+  --size SIZE
                         Número total de páginas da memória cache
-  --tipo_mapeamento TIPO_MAPEAMENTO
+  --mapping MAPPING
                         Valores aceitos para esse parâmetro são: DI / AS /
                         AC - Tipos do mapeamento desejado
-  --politica_substituicao POLITICA_SUBSTITUICAO
+  --algorithm ALGORITHM
                         Valores aceitos para esse parâmetro são: RANDOM /
                         FIFO / LRU / LFU - Qual será a política de
                         substituição da memória que será utilizada
-  --qtd_conjuntos QTD_CONJUNTOS
+  --set_size SET_SIZE
                         Quando for escolhido o tipo de mapeamento AC deve-se
                         informar quantos conjuntos devem ser criados dentro da
                         memória cache.
-  --arquivo_acesso ARQUIVO_ACESSO
+  --path PATH
                         Nome do arquivo que possui as posições da memória
                         principal que serão acessadas, formato de número
                         inteiro e uma posição de memória principal por
