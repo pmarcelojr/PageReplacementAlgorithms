@@ -57,3 +57,19 @@ optional arguments:
                         debugs basta passar --debug 1
 
 ```
+# O que foi implementado
+--
+
+No simulador, você poderá escolher qual será a política de substituição de páginas da memória cache. 
+São 4 algoritmos de substituição, sendo eles:
+
+* FIFO
+* LFU
+* LRU
+* RANDOM
+
+No simulador, a memória cache poderá ser organizada em três diferentes esquemas, sendo eles:
+
+* AC - Associativo por contjunto
+* DI - Direto
+* AS - Associativo
