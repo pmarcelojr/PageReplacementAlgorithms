@@ -46,7 +46,7 @@ $ python main.py -h
 ```
 usage: Simulador de Substituição de Paginas [-h] [--size SIZE]
                                               [--mapping MAPPING]
-                                              [--algorithm ALGORITHM/]
+                                              [--algorithm ALGORITHM]
                                               [--set_size SET_SIZE]
                                               [--path PATH]
                                               [--debug DEBUG]

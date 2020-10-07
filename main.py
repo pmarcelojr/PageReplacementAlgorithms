@@ -1,31 +1,16 @@
 # -*- coding: utf-8 -*-
 import argparse, random, re
 
-
-# Essa lista irá armazenar qual o número de vezes que uma
-# determinada posição da memória cache foi acessada.
+# Lista para armazenar num que uma posição da memoria for acessada.
 contador_lfu = {}
 
-
-# Essa lista irá armazenar a ordem que a posição da memória
-# principal foi inserida na memória cache, quando ocorre um CACHE MISS
-# a posição ZERO dessa lista será removida e a nova posição de memória
-# será inserida no topo da lista.
+# Lista para armazenar ordem qda posição que for inserida na memoria. 
+# Quando ocorre um CACHE MISS a posição ZERO dessa lista será removida
+#  e a nova posição de memória será inserida no topo da lista.
 contador_fifo = {}
 
-
+# Verifica se existe na memoria uma posicao que nao foi utilizada
 def existe_posicao_vazia(memoria_cache, set_size, posicao_memoria):
-  """Verifica se existe na cache uma posição de memória que ainda não foi utilizada,
-  se existir, essa posição é retornada.
-
-  Arguments:
-    memoria_cache {list} -- memória cache
-    set_size {int} -- número de conjuntos da cache
-    posicao_memoria {int} -- posição de memória que se quer armazenar na cache
-
-  Returns:
-    [int] -- com a primeira posição de memória vazia do conjunto
-  """
   num_conjunto = get_num_conjuno_posicao_memoria(posicao_memoria, set_size)
   lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, set_size)
 
@@ -35,10 +20,8 @@ def existe_posicao_vazia(memoria_cache, set_size, posicao_memoria):
       return x
   return -1
 
-
+# Função de debug que exibe o estado do contador FIFO
 def imprimir_contador_fifo():
-  """Função de debug que exibe o estado do contador FIFO
-  """
   print('+--------------------------------------+')
   print("| Contador FIFO                        |")
   print('+--------------------------------------+')
@@ -48,11 +31,8 @@ def imprimir_contador_fifo():
     print("|{:>9}|{:>28}|".format(index,x))
   print('+---------+----------------------------+')
 
-
+# Seta os valores do contador fifo para que a primeira subsitituição ocorra no primeiro elemento que faz parte do conjunto 
 def inicializar_contador_fifo():
-  """Seta os valores do contador fifo para que a primeira subsitituição
-  ocorra no primeiro elemento que faz parte do conjunto
-  """
   # cria no contador fifo uma posição para cada conjunto
   for x in range(0, set_size):
     contador_fifo[x] = 0
@@ -60,10 +40,8 @@ def inicializar_contador_fifo():
   if debug:
     imprimir_contador_fifo()
 
-
+# Função de debug que exibe o estado do contador LFU
 def imprimir_contador_lfu():
-    """Função de debug que exibe o estado do contador LFU
-    """
     print('+--------------------------------------+')
     print("| Contador LFU                         |")
     print('+--------------------------------------+')
@@ -73,48 +51,21 @@ def imprimir_contador_lfu():
       print("|{:>9}|{:>28}|".format(index,contador_lfu[x]))
     print('+---------+----------------------------+')
 
-
+# Seta os valores do contador LFU para zero 
 def inicializar_contador_lfu():
-  """Seta os valores do contador LFU para zero, ou seja, a posição de memória que ocupa aquela
-  posição da cache ainda não foi utilizada. Para cada posição da cache teremos um contador
-  que será somado tada vez que houver um CACHE HIT e, será zerado quando a posição for substituida
-  """
-  # cria on contador LFU uma posiçõao para caqda posição de memória
+  # cria on contador LFU uma posiçao para caqda posição de memória
   for x in range(0, size):
     contador_lfu[x] = 0
 
   if debug:
     imprimir_contador_lfu()
 
-
+# Retorna o número do conjunto onde essa posição de memória é sempre mapeada
 def get_num_conjuno_posicao_memoria(posicao_memoria, set_size):
-  """Retorna o número do conjunto onde essa posição de memória é sempre mapeada
-
-  Arguments:
-    posicao_memoria {int} -- posição de memória que se quer acessar
-    set_size {int} -- número de conjuntos que a cache possui
-  """
   return int(posicao_memoria)%int(set_size)
 
-
-def print_cache_direto(cache):
-  """Imprime o estado da memória cache no modelo de mapeamento direto.
-  """
-  print("+--------------------------+")
-  print("|      Cache Direto        |")
-  print("+--------------------------+")
-  print("|Tamanho Cache: {:>11}| ".format(len(cache)))
-  print("+----------+---------------+")
-  print("|Pos Cache |Posição Memória|")
-  print("+----------+---------------+")
-  for posicao, valor in cache.items():
-    print("|{:>10}|{:>15}|".format(posicao, valor))
-  print("+----------+---------------+")
-
-
+  # Imprime o estado da memória cache no modelo de mapeamento associativo.
 def print_cache_associativo(cache):
-  """Imprime o estado da memória cache no modelo de mapeamento associativo.
-  """
   print("+--------------------------+")
   print("|Tamanho Cache: {:>11}| ".format(len(cache)))
   print("+----------+---------------+")
@@ -126,10 +77,21 @@ def print_cache_associativo(cache):
     print("|{:>10}|{:>15}|".format(posicao, valor))
   print("+----------+---------------+")
 
+# Imprime o estado da memória cache no modelo de mapeamento direto.
+def print_cache_direto(cache):
+  print("+--------------------------+")
+  print("|      Cache Direto        |")
+  print("+--------------------------+")
+  print("|Tamanho Cache: {:>}| ".format(len(cache)))
+  print("+----------+---------------+")
+  print("|Pos Cache |Posição Memória|")
+  print("+----------+---------------+")
+  for posicao, valor in cache.items():
+    print("|{:>10}|{:>15}|".format(posicao, valor))
+  print("+----------+---------------+")
 
+# Imprime o estado da memória cache no modelo de mapeamento associativo por conjunto.
 def print_cache_associativo_conjunto(cache, set_size):
-  """Imprime o estado da memória cache no modelo de mapeamento associativo por conjunto.
-  """
   print("+------------------------------+")
   print("|Tamanho: {:>21}|\n|Conjuntos: {:>19}|".format(len(cache), set_size))
   print("+------------------------------+")
@@ -142,36 +104,17 @@ def print_cache_associativo_conjunto(cache, set_size):
     print("|{} \t|{:4}\t|\t   {:>4}|".format(posicao, num_conjunto, valor))
   print("+-------+-------+--------------+")
 
-
+# Cria uma memória cache zerada utilizando dicionários (chave, valor) e com valor padrão igual a '-1'
 def inicializar_cache(size):
-  """Cria uma memória cache zerada utilizando dicionários (chave, valor) e com
-  valor padrão igual a '-1'
-
-  Arguments:
-    size {int} -- tamanho total de palavras da cache
-
-  Returns:
-    [list] -- [dicionário]
-  """
-  # zera tota a memória cache
   memoria_cache = {}
-
   # popula a memória cache com o valor -1, isso indica que a posição não foi usada
   for x in range(0, size):
     memoria_cache[x] = -1
 
   return memoria_cache
 
-
+# Verifica se uma determinada posição de memória está na cache no modo associativo / associativo por conjunto
 def verifica_posicao_em_cache_associativo_conjunto(memoria_cache, set_size, posicao_memoria,):
-  """Verifica se uma determinada posição de memória está na cache
-    no modo associativo / associativo por conjunto
-
-  Arguments:
-    memoria_cache {list} -- memória cache
-    set_size {int} -- número de conjuntos do cache
-    posicao_memoria {int} -- posição que se deseja acessar
-  """
   num_conjunto = int(posicao_memoria)%int(set_size)
 
   while num_conjunto < len(memoria_cache):
@@ -183,19 +126,8 @@ def verifica_posicao_em_cache_associativo_conjunto(memoria_cache, set_size, posi
   # não achou a posição de memória na cache
   return -1
 
-
+# Retorna uma lista com todas as posições da memória cache que fazem parte de um determinado conjunto.
 def get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, set_size):
-  """Retorna uma lista com todas as posições da memória cache que fazem
-  parte de um determinado conjunto.
-
-  Arguments:
-    memoria_cache {list} -- memória cache
-    num_conjunto {int} -- número do conjunto que se quer saber quais são os endereçamentos associados com aquele conjunto
-    set_size {int} -- quantidade total de conjuntos possíveis na memória
-
-  Returns:
-    [list] -- lista de posições de memória associada com um conjunto em particular
-  """
   lista_posicoes = []
   posicao_inicial = num_conjunto
   while posicao_inicial < len(memoria_cache):
@@ -203,23 +135,13 @@ def get_lista_posicoes_cache_conjunto(memoria_cache, num_conjunto, set_size):
     posicao_inicial += set_size
   return lista_posicoes
 
-
+# Nessa algoritmo, no momento que ocorrer um CACHE MISS,
+# será sorteado um elemento do conjunto para ser substituído pela nova posição de memória.
 def algorithm_RANDOM(memoria_cache, set_size, posicao_memoria):
-  """Nessa algoritmo, no momento que ocorrer um CACHE MISS,
-  será sorteado um elemento do conjunto para ser substituído pela nova posição
-  de memória.
-
-  Arguments:
-    memoria_cache {list} -- memóiria cache
-    set_size {int} -- quantidade de conjuntos
-    posicao_memoria {int} -- posição de memória que será acessada
-  """
   num_conjunto = int(posicao_memoria)%int(set_size)
 
   lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
-
-  # seleciona de forma aleatória uma das posições de memória
-  # que fazem parte do conjunto em particular e armazena dentro
+  # seleciona de forma aleatória uma das posições de memória que fazem parte do conjunto em particular e armazena dentro
   # daquela posição o valor da memória principal
   posicao_memoria_cache_para_trocar = random.choice(lista_posicoes)
 
@@ -228,16 +150,8 @@ def algorithm_RANDOM(memoria_cache, set_size, posicao_memoria):
 
   memoria_cache[posicao_memoria_cache_para_trocar] = posicao_memoria
 
-
+# Nessa algoritmo, o primeiro elemento que entra é o primeiro elemento que sai, funciona exatamente como uma fila.
 def algorithm_FIFO(memoria_cache, set_size, posicao_memoria):
-  """Nessa algoritmo, o primeiro elemento que entra é o primeiro elemento que sai,
-  funciona exatamente como uma fila.
-
-  Arguments:
-    memoria_cache {list} -- memóiria cache
-    set_size {int} -- quantidade de conjuntos
-    posicao_memoria {int} -- posição de memória que será acessada
-  """
   num_conjunto = int(posicao_memoria)%int(set_size)
   posicao_substituir = contador_fifo[num_conjunto]
   lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
@@ -259,21 +173,15 @@ def algorithm_FIFO(memoria_cache, set_size, posicao_memoria):
   if debug:
     print('Posição de memória cache que será trocada é: {}'.format(lista_posicoes[posicao_substituir]))
 
-
-def algorithm_LFU(memoria_cache, set_size, posicao_memoria):
-  """Nessa algoritmo, o elemento que é menos acessado é removido da
+"""Nessa algoritmo, o elemento que é menos acessado é removido da
   memória cache quando ocorrer um CACHE MISS. A cada CACHE HIT a posição do HIT ganha um ponto
   de acesso, isso é usado como contador para saber qual posição deve ser removida no caso de
   CACHE MISS.
-
-  Arguments:
-    memoria_cache {list} -- memóiria cache
-    set_size {int} -- quantidade de conjuntos
-    posicao_memoria {int} -- posição de memória que será acessada
-  """
+"""
+def algorithm_LFU(memoria_cache, set_size, posicao_memoria):
   num_conjunto = int(posicao_memoria)%int(set_size)
   lista_posicoes = get_lista_posicoes_cache_conjunto(memoria_cache,num_conjunto, set_size)
-
+  
   # descobrir dentro do conjunto qual posição da cache tem menos acesso
   posicao_substituir = 0
   if len(lista_posicoes) > 1:
