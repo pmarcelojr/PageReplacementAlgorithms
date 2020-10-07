@@ -2,10 +2,27 @@
 
 Esse script permite que você visualize de forma didática como ocorre a escolha e a substituição de uma posição de memória no cache em três modelos diferentes de mapeamento de memória.
 
-Instalação
+# O que foi implementado
 --
 
-O único pré-requisito do script é que sua maquina rode python 3.7+
+No simulador, você poderá escolher qual será a política de substituição de páginas da memória cache. 
+São 4 algoritmos de substituição, sendo eles:
+
+* FIFO
+* LFU
+* LRU
+* RANDOM
+
+No simulador, a memória cache poderá ser organizada em três diferentes esquemas, sendo eles:
+
+* AC - Associativo por contjunto
+* DI - Direto
+* AS - Associativo
+
+Pré-Requisitos
+--
+
+O único pré-requisito é que sua maquina rode python 3.8+
 
 Para saber qual versão do python que você tem instalado acesse o seu terminal e digite:
 
@@ -19,7 +36,7 @@ Como resultado desejado deve aparecer algo do tipo
 Python 3.8.2
 ```
 
-Após a instalação do script para acessar o help da aplicação, basta digitar no console o comando a seguir:
+Agora, para acessar o help da aplicação, basta digitar no terminal o comando a seguir:
 
 ```
 $ python main.py -h
@@ -57,19 +74,3 @@ optional arguments:
                         debugs basta passar --debug 1
 
 ```
-# O que foi implementado
---
-
-No simulador, você poderá escolher qual será a política de substituição de páginas da memória cache. 
-São 4 algoritmos de substituição, sendo eles:
-
-* FIFO
-* LFU
-* LRU
-* RANDOM
-
-No simulador, a memória cache poderá ser organizada em três diferentes esquemas, sendo eles:
-
-* AC - Associativo por contjunto
-* DI - Direto
-* AS - Associativo
