@@ -52,26 +52,14 @@ usage: Simulador de Substituição de Paginas [-h] [--size SIZE]
                                               [--debug DEBUG]
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --size SIZE
-                        Número total de páginas da memória cache
-  --mapping MAPPING
-                        Valores aceitos para esse parâmetro são: DI / AS /
-                        AC - Tipos do mapeamento desejado
-  --algorithm ALGORITHM
-                        Valores aceitos para esse parâmetro são: RANDOM /
-                        FIFO / LRU / LFU - Qual será a política de
+  `-h, --help`         show this help message and exit.
+  `--size SIZE`         Número total de páginas da memória cache.
+  `--mapping MAPPING`         Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.
+  `--algorithm ALGORITHM`         Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de
                         substituição da memória que será utilizada
-  --set_size SET_SIZE
-                        Quando for escolhido o tipo de mapeamento AC deve-se
-                        informar quantos conjuntos devem ser criados dentro da
-                        memória cache.
-  --path PATH
-                        Nome do arquivo que possui as posições da memória
-                        principal que serão acessadas, formato de número
-                        inteiro e uma posição de memória principal por
+  `--set_size SET_SIZE`         Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.
+  `--path PATH`         Nome do arquivo que possui as posições da memória principal que serão acessadas, formato de número inteiro e uma posição de memória principal por
                         linha.
-  --debug DEBUG         Por padrão vem setado como 0, caso queira exibir os
-                        debugs basta passar --debug 1
+  `--debug DEBUG`         Por padrão vem setado como 0, caso queira exibir os debugs basta passar --debug 1
 
 ```
