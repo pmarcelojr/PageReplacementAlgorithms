@@ -178,7 +178,7 @@ O arquivo file_test/associativo_100_hit.txt é composto por:
 $ python main.py --size 4 --mapping=AS --path=file_test/associativo_100_hit.txt --debug 1 --algorithm FIFO
 ```
 
-* Saída
+* Saída:
 ```
 Interação número: 10
 Cache MISS: posiçao de memória 10
@@ -232,6 +232,136 @@ As posições são: [0, 1, 2, 3, 4, 5, 6, 6, 6, 10]
 Tamanho total da cache: 4
 Tipo Mapeamento: AS
 Política de Substituição: FIFO
+Debug: 1
+Step: 0
+-------------------------------------------------------------------------------
+```
+
+### LRU
+
+Nesse quando ocorre um CACHE MISS é necessário trazer uma nova posição da memória principal, para a memória cache então será removido a posição de memória que está na cache que foi usada há mais tempo.
+
+O algoritmo trabalha da seguinte forma: Se houver um CACHE HIT, então essa posição da CACHE vai para o topo da pilha, caso ocorra um CACHE MISS o primeiro elemento da fila é removido, e no seu lugar é colocado a posição da memória principal e esse local passa a ser o novo topo da pilha.
+
+* Executando o comando:
+```
+$ python main.py --size 4 --mapping=AS --path=file_test/associativo_101_hit.txt --debug 1 --algorithm LRU
+```
+
+* Saída:
+
+```
+Interação número: 8
+Cache MISS: posiçao de memória 6
+Posição da cache ainda não utilizada: -1
+
+Leitura linha 7, posição de memória 6.
+Posição Memória: 6
+Conjunto: 0
+Lista posições: [0, 1, 2, 3]
++--------------------------+
+|Tamanho Cache:           4| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              3|
+|         1|              4|
+|         2|              5|
+|         3|              6|
++----------+---------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: LRU
+-----------------
+Total de memórias acessadas: 8
+Total HIT 1
+Total MISS 7
+Taxa de Cache HIT 0.00%
+
+
+-------------------------------------------------------------------------------
+Parâmetros da Simulação
+-------------------------------------------------------------------------------
+Arquivo com as posições de memória: file_test/associativo_101_hit.txt
+Número de posições de memória: 8
+As posições são: [0, 1, 2, 3, 4, 4, 5, 6]
+Tamanho total da cache: 4
+Tipo Mapeamento: AS
+Política de Substituição: LRU
+Debug: 1
+Step: 0
+-------------------------------------------------------------------------------
+```
+
+### LFU
+
+Esse é esquema de substituição exige que exista um contador para cada posição da memória cache, esse contador é incrementado toda vez que a posição é acessada e é zerado toda vez que uma nova posição da memória principal é vinculada com aquela posição da memória cache.
+
+A ideia aqui é aproveitar a localidade temporal, ou seja, aquela localidade que diz respeito a reusar posições que foram recentemente utilizadas.
+
+* Executando o comando:
+```
+$ python main.py --size 4 --mapping=AS --path=file_test/associativo_101_hit.txt --debug 1 --algorithm LFU
+```
+
+* Saída:
+```
+Posição Memória Lida No Arquivo: 6
+Conjunto: 0
+Número de Acesso Da Posição com Menos Acesso: 0
+Lista Posições do Conjuno: [0, 1, 2, 3]
+Lista com as posições menos acessadas do conjunto: [1, 2, 3]
+Posição Cache Substituir: 2
+Posição de memória cache que será trocada é: 2
++--------------------------+
+|Tamanho Cache:           4| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              4|
+|         1|              1|
+|         2|              6|
+|         3|              5|
++----------+---------------+
++--------------------------------------+
+| Contador LFU                         |
++--------------------------------------+
+|Posição Cache | Qtd Acessos           |
++---------+----------------------------+
+|        0|                           1|
+|        1|                           0|
+|        2|                           0|
+|        3|                           0|
++---------+----------------------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: LFU
+-----------------
+Total de memórias acessadas: 8
+Total HIT 1
+Total MISS 7
+Taxa de Cache HIT 0.00%
+
+
+-------------------------------------------------------------------------------
+Parâmetros da Simulação
+-------------------------------------------------------------------------------
+Arquivo com as posições de memória: file_test/associativo_101_hit.txt
+Número de posições de memória: 8
+As posições são: [0, 1, 2, 3, 4, 4, 5, 6]
+Tamanho total da cache: 4
+Tipo Mapeamento: AS
+Política de Substituição: LFU
 Debug: 1
 Step: 0
 -------------------------------------------------------------------------------

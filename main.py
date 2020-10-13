@@ -371,7 +371,7 @@ def executar_mapeamento_associativo_conjunto(size, set_size, posicoes_memoria_pa
       print_cache_associativo_conjunto(memoria_cache, set_size)
 
     if step:
-      print('Tecle ENTER para processar o próximo passo:');
+      print('Tecle ENTER para processar o próximo passo:')
       input()
 
   # se for LFU e com debug imprimir os dados computador no contador LFU
@@ -402,7 +402,7 @@ def executar_mapeamento_direto(size, posicoes_memoria_para_acessar):
   print_cache_direto(memoria_cache)
 
   hitoumiss = ''
-  num_hit = 0;
+  num_hit = 0
   num_miss = 0
   for index, posicao_memoria in enumerate(posicoes_memoria_para_acessar):
     # no mapeamento direto, cada posição da memória principal tem uma posição
