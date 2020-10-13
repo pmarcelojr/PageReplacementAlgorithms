@@ -63,10 +63,100 @@ optional arguments:
 
 ```
 
+## Executando
+
+Para executar os testes, siga os passos abaixo conforme cada tipo de algoritmo.
+
+### RANDOM
+
+Nesse existe a escolha aleatória sobre qual elemento da cache deve ser substituída.
+
+* Executando o comando:
+```
+python main.py --size 4 --mapping=AS --path=file_test/associativo_100_hit.txt --debug 1 --algorithm RANDOM
+```
+
+É interessante observar que duas execuções consecutivas podem ter resultados distintos tanto no estado final da cache como também na sua taxa de CACHE HIT.
+
+
+O arquivo file_test/associativo_101_hit.txt é composto por:
+
+```
+0
+1
+2
+3
+4
+4
+5
+6
+```
+
+* Executando o comando duas vezes:
+```
+$ python main.py --size 4 --mapping=AS --path=file_test/associativo_101_hit.txt --debug 1 --algorithm RANDOM
+```
+
+Note que a saída não necessariamente será igual a saída apresentada a baixo uma vez que a escolha do elemento da cache que será removido é aleatória.
+
+#### Execução A
+```
++--------------------------+
+|Tamanho Cache:           4| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              0|
+|         1|              1|
+|         2|              6|
+|         3|              5|
++----------+---------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: RANDOM
+-----------------
+Total de memórias acessadas: 8
+Total HIT 1
+Total MISS 7
+Taxa de Cache HIT 0.00%
+```
+
+#### Execução B
+
+```
++--------------------------+
+|Tamanho Cache:           4| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              0|
+|         1|              4|
+|         2|              6|
+|         3|              3|
++----------+---------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: RANDOM
+-----------------
+Total de memórias acessadas: 8
+Total HIT 1
+Total MISS 7
+Taxa de Cache HIT 0.00%
+```
 
 ### FIFO
 
-Nesse esquema de substituição o primeiro elemento que entra é o primeiro elemento que sai.
+Primeiro elemento que entra é o primeiro elemento que sai.
 
 O arquivo file_test/associativo_100_hit.txt é composto por:
 
@@ -80,14 +170,15 @@ O arquivo file_test/associativo_100_hit.txt é composto por:
 6
 6
 6
+10
 ```
 
-Executando o comando:
-
+* Executando o comando:
 ```
 $ python main.py --size 4 --mapping=AS --path=file_test/associativo_100_hit.txt --debug 1 --algorithm FIFO
 ```
 
+* Saída
 ```
 Interação número: 10
 Cache MISS: posiçao de memória 10
