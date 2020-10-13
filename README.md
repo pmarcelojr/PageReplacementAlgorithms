@@ -67,6 +67,16 @@ optional arguments:
 
 Para executar os testes, siga os passos abaixo conforme cada tipo de algoritmo.
 
+## 1 - Mapeamento Associativo
+
+No mapeamento associativo não existe uma relação pré-estabelecida entre a posição da memória principal e a posição da memória cache, ou seja, não existe determinismo entre a posição da memória principal e a posição da memória cache. Dessa forma para saber se uma posição da memória principal está na memória cache é necessário percorrer toda a memória cache a fim de verificar se a posição da memória principal está ou não na cache.
+
+Caso a posição de memória principal esteja na memória cache então ela é retornada como um CACHE HIT, caso ela não esteja armazenada então é necessário que seja escolhida uma posição de memória cache para ser removida, para que a nova posição da memória principal possa ser armazenada na memória cache.
+
+A vantagem desse modelo de mapeamento em relação ao modelo direto é que não corremos o risco de ter cache ociosa, em contrapartida, o custo para identificar se uma posição da memória principal está na memória cache é maior pois temos que verificar todas as posições da memória cache.
+
+A baixo serão apresentados alguns exemplos de uso do simulador onde é utilizado o esquema de mapeamento associativo juntamente com esquemas diversos de substituição de memória.
+
 ### RANDOM
 
 Nesse existe a escolha aleatória sobre qual elemento da cache deve ser substituída.
@@ -366,3 +376,206 @@ Debug: 1
 Step: 0
 -------------------------------------------------------------------------------
 ```
+
+## 2 - Mapeamento Direto
+
+O mapeamento direto da memória cache, é aquele que associa cada posição da memória principal, com uma posição específica da memória cache. Na aplicação essa associação foi implementada utilizando o mod como método de separação dos blocos, porém, caso o endereçamento de memória seja binário em geral é utilizado um conjunto dos primeiros blocos do endereçamento da posição de memória. Como referência na posição da memória cache, o tamanho da memória cache definirá a quantidade de bits que serão selecionados.
+Nessa aplicação como exemplo, foram criados quatro arquivos com cenários (entradas) diferentes com relação ao uso do mapeamento direto, objetivando exibir aqui as principais situações de cache hit e cache miss.
+No primeiro exemplo não ocorre CACHE HIT, ou seja, para cada posição de memória desejada será necessário ir acessar e buscar na memória principal.
+
+O arquivo direto_0_hit.txt é composto por:
+```
+1
+11
+3
+2
+15
+13
+7
+6
+14
+12
+```
+
+* Executando o comando:
+```
+$ python main.py --size 10 --mapping=DI --path=file_test/direto_0_hit.txt
+```
+
+* Saída:
+```
+Leitura linha 9,  posição de memória desejada 12.
+       Status: Miss
++--------------------------+
+|      Cache Direto        |
++--------------------------+
+|Tamanho Cache: 10| 
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|             -1|
+|         1|             11|
+|         2|             12|
+|         3|             13|
+|         4|             14|
+|         5|             15|
+|         6|              6|
+|         7|              7|
+|         8|             -1|
+|         9|             -1|
++----------+---------------+
+
+
+------------------------
+Resumo Mapeamento Direto
+------------------------
+Total de memórias acessadas: 10
+Total HIT: 0
+Total MISS: 10
+Taxa de Cache HIT: 0.00%
+
+```
+
+É importante ressaltar que nesse exemplo algumas posições da memória cache não foram utilizadas, pois nenhuma das posições de memória solicitadas estavam associadas com as posições de memória vazias, com -1. Isso mostra que a associação direta ganha em tempo de computação, mas em contrapartida, pode perder em flexibilidade uma vez que mesmo havendo posições de memória cache disponível, foi necessário fazer a substituição de uma página de memória na memória cache.
+
+Caso o mesmo arquivo seja executado utilizando, por exemplo, um esquema de cache associativo, o resultado final será:
+
+```
++--------------------------+
+|Tamanho Cache:          10|
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              1|
+|         1|              2|
+|         2|              3|
+|         3|             11|
+|         4|             12|
+|         5|             13|
+|         6|             14|
+|         7|              6|
+|         8|              7|
+|         9|             15|
++----------+---------------+
+```
+
+É possível observar que o tamanho da cache é exatamente igual a quantidade de posições de blocos diferentes na memória principal, isso é bom pois assim é utilizando a cache de maneira integral e ambas as memórias.
+No segundo exemplo, duas posições são consecutivamente acessadas, então ocorre cache miss apenas no primeiro acesso e em seguida, todos os demais acessos são CACHE HIT.
+
+O arquivo file_test/direto_50_hit.txt é composto por:
+```
+1
+2
+1
+2
+1
+2
+1
+2
+1
+2
+```
+
+* Executando o comando:
+```
+$ python main.py --size 10 --mapping=DI --path=file_test/direto_50_hit.txt
+```
+
+* Saída:
+```
+Leitura linha 9,  posição de memória desejada 2.
+       Status: Hit
++--------------------------+
+|      Cache Direto        |
++--------------------------+
+|Tamanho Cache: 10| 
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|             -1|
+|         1|              1|
+|         2|              2|
+|         3|             -1|
+|         4|             -1|
+|         5|             -1|
+|         6|             -1|
+|         7|             -1|
+|         8|             -1|
+|         9|             -1|
++----------+---------------+
+
+
+------------------------
+Resumo Mapeamento Direto
+------------------------
+Total de memórias acessadas: 10
+Total HIT: 8
+Total MISS: 2
+Taxa de Cache HIT: 0.00%
+```
+
+Observe que nesse caso temos uma alta taxa de CACHE HIT e novamente um uso limitado da cache.
+No terceiro exemplo temos uma mesma posição sendo acessada consecutivamente, assim, ocorre apenas um miss e o restante é hit.
+No terceiro exemplo apresentamos um cenário onde a ineficiência do mapeamento direto é apresentada. Apesar de existir um número grande de memória, o número de CACHE MISS é elevado, uma vez que está sendo feita um alto uso de memória, de uma mesma localidade de memória, com sombreamento entre si, gerando assim um fenômeno onde existe cache disponível, mas o modo como o mapeamento é feito, no caso, associativo, impede o uso da totalidade da cache.
+
+O arquivo file_test/direto_misto_hit.txt é composto por:
+```
+0
+1
+2
+2
+22
+32
+42
+20
+1
+10
+11
+12
+13
+```
+
+* Executando o comando:
+```
+$ python main.py --size 10 --mapping=DI --path=file_test/direto_misto_hit.txt
+```
+
+* Saída:
+```
+Leitura linha 12,  posição de memória desejada 13.
+       Status: Miss
++--------------------------+
+|      Cache Direto        |
++--------------------------+
+|Tamanho Cache: 10| 
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|             10|
+|         1|             11|
+|         2|             12|
+|         3|             13|
+|         4|             -1|
+|         5|             -1|
+|         6|             -1|
+|         7|             -1|
+|         8|             -1|
+|         9|             -1|
++----------+---------------+
+
+
+------------------------
+Resumo Mapeamento Direto
+------------------------
+Total de memórias acessadas: 13
+Total HIT: 2
+Total MISS: 11
+Taxa de Cache HIT: 0.00%
+```
+
+Nota dos autores sobre o método de mapeamento direto
+--
+
+No método de mapeamento direto não existem políticas de substituição de cache, uma vez que a posição da memória principal sempre estará mapeada com a mesma posição da memória cache. Em contrapartida, nos modos associativo e associativo por conjunto essa relação direta entre as duas memórias existe, mas com granularidade menor, e com isso, surge a necessidade que sejam implementados mecanismos para escolher (em caso de falta de espaço na memória cache), para armazenar uma posição da memória principal, na qual a posição será descartada para que a nova posição seja ocupada.
