@@ -20,6 +20,9 @@ No simulador, a memória cache poderá ser organizada em três diferentes esquem
 * DI - Direto
 * AS - Associativo
 
+* Arquivo de Referencia:
+http://www.idc-online.com/technical_references/pdfs/information_technology/Page_Replacement_Algorithms.pdf
+
 Pré-Requisitos
 --
 
