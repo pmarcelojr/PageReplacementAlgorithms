@@ -377,7 +377,140 @@ Step: 0
 -------------------------------------------------------------------------------
 ```
 
-## 2 - Mapeamento Direto
+## 2 - Mapeamento Associativo por Conjuntos
+
+Nesse modo, a memória cache é dividida em conjuntos, ou seja, uma posição da memória principal é mapeada sempre para um mesmo conjunto e isso permite uma consulta mais rápida na cache se uma dada posição de memória está ou não nela.
+
+No exemplo abaixo é aplicado o mapeamento por conjunto, utilizando como número de conjuntos o valor 2 e como política de substituição da memória está sendo utilizado o tipo RANDOM.
+
+Existem diversas formas de se organizar um conjunto dentro da cache, neste  simulador utilizamos o módulo (MOD) da quantidade de conjuntos em relação ao tamanho da cache, para determinar qual posição da cache faz parte de cada conjunto. Em uma cache de tamanho 4 com 2 conjuntos, as posições do conjunto ZERO são {0, 2}, ao passo que o conjunto UM está associado aos elementos {1, 3}, como pode ser observado abaixo.
+
+
+```
++------------------------------+
+|Tamanho:                     4|
+|Conjuntos:                   2|
++------------------------------+
++  Cache Associativo Conjunto  +
++-------+-------+--------------+
+|#      | Cnj   |   Pos Memória|
++-------+-------+--------------+
+|0      |   0   |            -1|
+|1      |   1   |            -1|
+|2      |   0   |            -1|
+|3      |   1   |            -1|
++-------+-------+--------------+
+```
+
+Desta forma, podemos observar que o comportamento do modo associativo por conjunto quando o conjunto é igual a 1 é exatamente igual ao modo associativo, pois no modo associativo existe apenas um único conjunto para toda a cache.
+
+Quando temos dois conjuntos, por exemplo, toda posição de memória principal cujo identificador é par será associado a algum elemento do conjunto ZERO, ao passo que toda posição de memória ímpar será associada a algum elemento do conjunto UM.
+
+Todos os modos de substituição de memória, RANDOM, FIFO, LRU e LFU apresentados anteriormente no modo associativo funcionarão exatamente da mesma forma, a diferença é que ao invés de utilizar todos os elementos, foi usado apenas os elementos que pertencem ao conjunto associado com a posição de memória que está sendo acessada.
+
+Para mais detalhes, acesse o código fonte para entender um pouco mais sobre como essas políticas são implementadas. É importante observar que não estamos preocupados com eficiência, ou uso da melhor estrutura de dados para cada tipo de algoritmo de substituição de memória, o intuito é apresentar como cada um se comporta, seus pontos positivos e negativos.
+
+```
+$ python main.py --size 10 --mapping=AC --path=file_test/acesso_associativo_100_hit.txt --set_size 2 --debug 1 --algorithm RANDOM
+```
+
+No segundo exemplo estamos utilizando a política de substituição conhecida como FIFO, ou seja, a primeira posição de memória que entra no conjunto e a primeira que será substituída quando houver um cache miss.
+
+```
+$ python main.py --size 10 --mapping=AC --path=file_test/acesso_associativo_100_hit.txt --set_size 2 --debug 1 --algorithm FIFO
+```
+
+Nesse exemplo há alguns cache hit obrigando assim que o contador da posição a ser substituída não seja incrementado.
+
+```
+$ python main.py --size 10 --mapping=AC --path=file_test/acesso_associativo_conjunto_51_hit.txt --set_size 2 --debug 1 --algorithm FIFO
+```
+
+O próximo exemplo simula o processo do tipo de mapeamento associativo por conjunto, com um total de 6 posições de cache e dois conjuntos.
+
+```
+$ python main.py --size 6 --mapping=AC --path=file_test/acesso_associativo_conjunto_51_hit.txt --debug 1 --algorithm FIFO --set_size 2
+```
+
+Nesse exemplo temos leituras de memórias em dois conjuntos distintos, mostrando que primeiro é substituído a posição que está há mais tempo na memória cache, respeitando a ordem do conjunto.
+
+```
+python main.py --size 6 --mapping=AC --path=file_test/acesso_associativo_conjunto_52_hit.txt --debug 1 --algorithm FIFO --set_size 2
+```
+
+
+No exemplo de substituição utilizando o LRU, é necessário que haja um controle individual sobre cada posição da cache para saber quantas vezes ela já foi acessada dentro do seu conjunto.
+
+* Executando o comando:
+```
+$ python main.py --size 10 --mapping=AC --path=file_test/lru_0.txt --debug 1 --algorithm LRU --set_size 1
+```
+
+* Saída:
+```
+Interação número: 17
+Cache HIT: posiçao de memória 1, posição cache 7
+Posição Memória: 1
+Conjunto: 0
+Lista posições: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
++--------------------------+
+|Tamanho Cache:          10| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|             -1|
+|         1|             -1|
+|         2|             -1|
+|         3|             -1|
+|         4|             -1|
+|         5|             -1|
+|         6|              0|
+|         7|              2|
+|         8|              3|
+|         9|              1|
++----------+---------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: LRU
+-----------------
+Total de memórias acessadas: 17
+Total HIT 13
+Total MISS 4
+Taxa de Cache HIT 0.00%
+
+
+--------------------------------------------------------------------------------
+Parâmetros da Simulação
+--------------------------------------------------------------------------------
+Arquivo com as posições de memória: file_test/lru_0.txt
+Número de posições de memória: 17
+As posições são: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 1]
+Tamanho total da cache: 10
+Tipo Mapeamento: AC
+Quantidade de Conjuntos: 1
+Política de Substituição: LRU
+Debug: 1
+Step: 0
+--------------------------------------------------------------------------------
+```
+
+Mostrando então que houve a computação do número de acesso para cada uma das posições acessadas em relação ao conjunto que ela ocupa dentro da cache.
+
+
+No próximo exemplo temos um total de 4 posições da memória cahce e dois conjuntos, nese caso, duas posições tem o mesmo número de acesso então é feito um sorteio para ver qual será a posição descartada.
+
+```
+$ python main.py --size 4 --mapping=AC --path=file_test/lru_3.txt --debug 1 --algorithm LRU --set_size 2
+```
+
+A forma como os algoritmos de paginação são executados no mapeamento associativo por conjunto é exatamente igual ao modo associativo. A única diferença é que ao invés de fazer a substituição de página dentro de toda a cache, como no associativo, no associativo por conjunto, a substituição de página é feita apenas dentro do conjunto onde a posição de memória deveria ter sido mapeada.
+
+## 3 - Mapeamento Direto
 
 O mapeamento direto da memória cache, é aquele que associa cada posição da memória principal, com uma posição específica da memória cache. Na aplicação essa associação foi implementada utilizando o mod como método de separação dos blocos, porém, caso o endereçamento de memória seja binário em geral é utilizado um conjunto dos primeiros blocos do endereçamento da posição de memória. Como referência na posição da memória cache, o tamanho da memória cache definirá a quantidade de bits que serão selecionados.
 Nessa aplicação como exemplo, foram criados quatro arquivos com cenários (entradas) diferentes com relação ao uso do mapeamento direto, objetivando exibir aqui as principais situações de cache hit e cache miss.
@@ -575,7 +708,7 @@ Total MISS: 11
 Taxa de Cache HIT: 0.00%
 ```
 
-Nota dos autores sobre o método de mapeamento direto
+Sobre o método de mapeamento direto
 --
 
 No método de mapeamento direto não existem políticas de substituição de cache, uma vez que a posição da memória principal sempre estará mapeada com a mesma posição da memória cache. Em contrapartida, nos modos associativo e associativo por conjunto essa relação direta entre as duas memórias existe, mas com granularidade menor, e com isso, surge a necessidade que sejam implementados mecanismos para escolher (em caso de falta de espaço na memória cache), para armazenar uma posição da memória principal, na qual a posição será descartada para que a nova posição seja ocupada.
