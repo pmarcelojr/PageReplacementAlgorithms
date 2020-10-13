@@ -52,14 +52,96 @@ usage: Simulador de Substituição de Paginas [-h] [--size SIZE]
                                               [--debug DEBUG]
 
 optional arguments:
-  `-h, --help`         show this help message and exit.
-  `--size SIZE`         Número total de páginas da memória cache.
-  `--mapping MAPPING`         Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.
-  `--algorithm ALGORITHM`         Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de
+  `-h, --help` : show this help message and exit.
+  `--size SIZE` : Número total de páginas da memória cache.
+  `--mapping MAPPING` : Valores aceitos para esse parâmetro são: DI / AS / AC - Tipos do mapeamento desejado.
+  `--algorithm ALGORITHM` : Valores aceitos para esse parâmetro são: RANDOM / FIFO / LRU / LFU - Qual será a política de
                         substituição da memória que será utilizada
-  `--set_size SET_SIZE`         Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.
-  `--path PATH`         Nome do arquivo que possui as posições da memória principal que serão acessadas, formato de número inteiro e uma posição de memória principal por
-                        linha.
-  `--debug DEBUG`         Por padrão vem setado como 0, caso queira exibir os debugs basta passar --debug 1
+  `--set_size SET_SIZE` : Quando for escolhido o tipo de mapeamento AC deve-se informar quantos conjuntos devem ser criados dentro da memória cache.
+  `--path PATH` : Nome do arquivo que possui as posições da memória principal que serão acessadas, formato de número inteiro e uma posição de memória principal por linha.
+  `--debug DEBUG` : Por padrão vem setado como 0, caso queira exibir os debugs basta passar --debug 1
 
+```
+
+
+### FIFO
+
+Nesse esquema de substituição o primeiro elemento que entra é o primeiro elemento que sai.
+
+O arquivo file_test/associativo_100_hit.txt é composto por:
+
+```
+0
+1
+2
+3
+4
+5
+6
+6
+6
+```
+
+Executando o comando:
+
+```
+$ python main.py --size 4 --mapping=AS --path=file_test/associativo_100_hit.txt --debug 1 --algorithm FIFO
+```
+
+```
+Interação número: 10
+Cache MISS: posiçao de memória 10
+Posição da cache ainda não utilizada: -1
+
+Leitura linha 9, posição de memória 10.
++--------------------------------------+
+| Contador FIFO                        |
++--------------------------------------+
+|Conjunto | Próxima Posição Substituir |
++---------+----------------------------+
+|        0|                           0|
+|        1|                           1|
++---------+----------------------------+
+Posição Memória: 10
+Conjunto: 0
+Lista posições: [0, 1, 2, 3]
+Posição para subistituição: 3
+Posição de memória cache que será trocada é: 3
++--------------------------+
+|Tamanho Cache:           4| 
++----------+---------------+
+|     Cache Associativo    |
++----------+---------------+
+|Pos Cache |Posição Memória|
++----------+---------------+
+|         0|              4|
+|         1|              5|
+|         2|              6|
+|         3|             10|
++----------+---------------+
+
+
+-----------------
+Resumo Mapeamento Associativo
+-----------------
+Política de Substituição: FIFO
+-----------------
+Total de memórias acessadas: 10
+Total HIT 2
+Total MISS 8
+Taxa de Cache HIT 0.00%
+
+
+--------------------------------------------------------------------------------
+Parâmetros da Simulação
+--------------------------------------------------------------------------------
+Arquivo com as posições de memória: file_test/associativo_100_hit.txt
+Número de posições de memória: 10
+As posições são: [0, 1, 2, 3, 4, 5, 6, 6, 6, 10]
+Tamanho total da cache: 4
+Tipo Mapeamento: AS
+Política de Substituição: FIFO
+Debug: 1
+Step: 0
+-------------------------------------------------------------------------------
 ```
